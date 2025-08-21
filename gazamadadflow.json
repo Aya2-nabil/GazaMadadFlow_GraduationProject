@@ -1,0 +1,1488 @@
+{
+  "name": "Aya_TheLatestGazaMadedFlowWorkFlow",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE",
+          "mode": "list",
+          "cachedResultName": "بيانات المواطنين \"آية نبيل سليم\"",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1293933407,
+          "mode": "list",
+          "cachedResultName": "بيانات المواطنين",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE/edit#gid=1293933407"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        1456,
+        -720
+      ],
+      "id": "380c633e-f706-4ca9-866a-9bb896f88c86",
+      "name": "Get User's data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "shL3Mwbo6n8a0MFy",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d2981d5a-2bf5-4c06-ae86-860e789a0d7e",
+              "leftValue": "={{ $json.ScrappedAt }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1984,
+        -752
+      ],
+      "id": "44fa08ef-0934-4e9f-a2a4-cd150026ff44",
+      "name": "if(scrapped_at ==null)"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        656,
+        -672
+      ],
+      "id": "258cd311-2440-408a-9ef7-ccff9628aef8",
+      "name": "loop over aid links"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1696,
+        -960
+      ],
+      "id": "7ce654f4-c38d-475a-bc91-aadefebcb73e",
+      "name": "Loop over users"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "88d501f5-54b0-47d5-aec0-84f1852b6a81",
+              "name": "full_name",
+              "value": "={{ $json[\"الاسم الاول\"]+\" \"+ $json[\"اسم الأب\"]+\" \"+$json[\"اسم الجد\"]+\" \"+$json[\"اسم العائلة\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "3e7b8d78-ab63-4be6-8b40-778f002fac20",
+              "name": "id_num",
+              "value": "={{ $json[\"رقم هوية المواطن\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "1a0c710d-2006-450f-a89e-9448e64f0744",
+              "name": "wife_name",
+              "value": "={{ $json[\"اسم الزوجة\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "d868b9fe-e81f-4c37-8993-1072be4a9736",
+              "name": "wife_id_num",
+              "value": "={{ $json[\"رقم هوية الزوجة\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "6b00e326-fb01-4261-b887-3a3f860c9ce5",
+              "name": "marital_status",
+              "value": "={{ $json[\"الحالة الاجتماعية\"] === \"لم يتزوج ابدا\" ? 'single' : $json['الحالة الاجتماعية'] === 'متزوج' ? 'married' : $json['الحالة الاجتماعية'] === 'مطلق' ? 'divorced' : $json['الحالة الاجتماعية'] === 'ارمل' ? 'widowed' : $json['الحالة الاجتماعية'] === 'مهجور' ? 'breadwinner' : 'suspended'}}\n",
+              "type": "string"
+            },
+            {
+              "id": "a2dacf58-29ed-439b-9c11-8d8d86ddbf0f",
+              "name": "mobile",
+              "value": "={{ $json[\"رقم الجوال 1\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "be6cfaf1-7006-40fc-8f28-3935195957a3",
+              "name": "family_count",
+              "value": "={{ $json['كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 0 و 2 سنوات؟']+$json['كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 0 و 2 سنوات؟'] +$json['كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 3 و 5 سنوات؟']}}",
+              "type": "string"
+            },
+            {
+              "id": "1e839ad6-e12b-48f7-bb11-c84632fe338c",
+              "name": "male_count",
+              "value": "={{ $json[\"كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 0 و 2 سنوات؟\"]+\n$json[\"كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 3 و 5 سنوات؟\"]+\n$json[\"كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 6 و 17 سنة؟\"]+\n$json[\"كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 18 و 59 سنة؟\"]+\n$json[\"كم عدد أفراد أسرتك الذكور الذين تبلغ أعمارهم أكبر من أو يساوي 60 سنة؟\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "e17ed02d-10b3-4c8d-965c-6830be3ae9f5",
+              "name": "female_count",
+              "value": "={{ $json[\"كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 0 و 2 سنوات؟\"]+ $json[\"كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 3 و 5 سنوات؟\"]+\n$json[\"كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 6 و 17 سنة؟\"]+$json[\"كم عدد أفراد أسرتك الاناث الذين تتراوح أعمارهم بين 18 و 59 سنة؟\"]+\n$json[\"كم عدد أفراد أسرتك الاناث الذين تبلغ أعمارهم أكبر من أو يساوي 60 سنة؟\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "18382a85-a136-450a-a413-d9fb4176825d",
+              "name": "children_under_2",
+              "value": "={{ $json[\"كم عدد الأطفال أقل من سنتين في اسرتك؟\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "c3cc41d0-a913-456f-8fdb-f1d4069226dc",
+              "name": "children_under_3",
+              "value": "={{ $json[\"كم عدد الأطفال أقل من 3 سنوات في اسرتك؟\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "4b750945-d8ff-4965-ad3a-bc04a36624ee",
+              "name": "children_5_to_16",
+              "value": "={{ $json[\"كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 6 و 17 سنة؟\"]+$json[\"كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 6 و 17 سنة؟\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "e910ac43-90e2-44e7-9b38-2444b5aae172",
+              "name": "document",
+              "value": "={{ $json['الوثيقة'] === 'هوية فلسطينية' ? 'palestinian_identity' : $json['الوثيقة'] === 'جواز سفر' ? 'passport' : $json['الوثيقة'] === 'رقم تعريف' ? 'identification_number' : $json['الوثيقة'] === 'وثيقة اردنية' ? 'jordanian_document' : 'other'}}\n",
+              "type": "string"
+            },
+            {
+              "id": "804d140f-1e07-4dfc-9e35-d9ba021347a2",
+              "name": "is_breadwinner_disabled",
+              "value": "={{ $json['هل المعيل مصاب حرب'] === 'لا' ? 0 : 1 }}",
+              "type": "string"
+            },
+            {
+              "id": "791e9be9-a7cb-4ed1-8d0d-20755229fdbc",
+              "name": "has_disability",
+              "value": "={{ $json['هل المعيل ذو اعاقة'] === 'لا' ? 0 : 1 }}",
+              "type": "string"
+            },
+            {
+              "id": "69d70450-270d-4a19-a326-b2f12ef11e5f",
+              "name": "disability_type",
+              "value": "={{ $json['نوع الاعاقة'] === 'اعاقة بصرية' ? 'visual_impairment' : $json['نوع الاعاقة'] === 'اعاقة سمعية' ? 'hearing_disability' : $json['نوع الاعاقة'] === 'اعاقة حركية' ? 'movement_disability' : $json['نوع الاعاقة'] === 'اعاقة عقلية' ? 'mental_disability' : $json['نوع الاعاقة'] === 'اعاقة نفسية' ? 'psychological_disability' : $json['نوع الاعاقة'] === 'اعاقة نطقية' ? 'speech_disability' : $json['نوع الاعاقة'] === 'اعاقة اجتماعية' ? 'social_disability' : $json['نوع الاعاقة'] === 'اعاقة حسية' ? 'sensory_impairment' : $json['نوع الاعاقة'] === 'اعاقة متعددة' ? 'multiple_disabilities' : 'لا يوجد'}}",
+              "type": "string"
+            },
+            {
+              "id": "d1ad3ec7-a95b-488b-95d8-69ceb026bd95",
+              "name": "has_chronic_disease",
+              "value": "={{ $json['لديه امراض مزمنه'] === 'لا' ? 0 : 1}}",
+              "type": "string"
+            },
+            {
+              "id": "900d5c01-b098-4999-9cc8-6eea95c04120",
+              "name": "war_victim",
+              "value": "={{ $json['خلال هذه الحرب هل فقدت احد افراد عائلتك'] === 'لا' ? 0 : 1 }}",
+              "type": "string"
+            },
+            {
+              "id": "ef0ce9ae-b86d-4f98-be85-5935f25ca340",
+              "name": "province",
+              "value": "={{ $json['المحافظة الحالية'] === 'شمال غزة' ? 1 : $json['المحافظة الحالية'] === 'محافظة غزة' ? 2 : $json['المحافظة الحالية'] === 'المحافظة الوسطى' ? 3 : $json['المحافظة الحالية'] === 'محافظة خانيونس' ? 4 : 5}}",
+              "type": "string"
+            },
+            {
+              "id": "8b078320-de34-4a1d-b5e1-c24d037fcfa3",
+              "name": "city",
+              "value": "={{ $json['المحافظة الحالية'] === 'شمال غزة' ? 3 : $json['المحافظة الحالية'] === 'محافظة غزة' ? 5 : $json['المحافظة الحالية'] === 'المحافظة الوسطى' ? 8 : $json['المحافظة الحالية'] === 'محافظة خانيونس' ? 6 : 7}}",
+              "type": "string"
+            },
+            {
+              "id": "a6180b63-2a92-43c4-a027-c0a49c0256c9",
+              "name": "housing_complex",
+              "value": "={{ \n  {\n    \"بيت لاهيا\": 19,\n    \"بيت حانون\": 20,\n    \"جباليا\": 21,\n    \"مخيم جباليا\": 22,\n    \"الرمال\": 23,\n    \"الصبرة\": 24,\n    \"الشجاعية\": 25,\n    \"التفاح\": 26,\n    \"الزيتون\": 27,\n    \"النصر\": 28,\n    \"الدرج\": 29,\n    \"الميناء\": 30,\n    \"الشيخ عجلين\": 31,\n    \"مخيم الشاطئ\": 32,\n    \"الزهراء\": 33,\n    \"المغراقة\": 34,\n    \"جحر الديك\": 36,\n    \"دير البلح\": 37,\n    \"مخيم دير البلح\": 38,\n    \"المصدر\": 46,\n    \"وادي السلقا\": 47,\n    \"النصيرات\": 39,\n    \"مخيم النصيرات\": 40,\n    \"البريج\": 41,\n    \"مخيم البريج\": 42,\n    \"مخيم المغازي\": 43,\n    \"المغازي\": 44,\n    \"الزوايدة\": 45,\n    \"خانيونس البلد\": 1,\n    \"مخيم خانيونس\": 2,\n    \"المواصي خانيونس\": 3,\n    \"قيزان ابو رشوان\": 4,\n    \"قيزان النجار\": 5,\n    \"المحطة\": 6,\n    \"البطن السمين\": 7,\n    \"جورة اللوت\": 8,\n    \"جورة العقاد\": 9,\n    \"معن\": 10,\n    \"الشيخ ناصر\": 11,\n    \"القرارة\": 12,\n    \"بني سهيلا\": 13,\n    \"عبسان الكبيرة\": 14,\n    \"عبسان الجديدة\": 15,\n    \"خزاعة\": 16,\n    \"الفخاري\": 17,\n    \"الاوروبي\": 18,\n    \"النصر رفح\": 48,\n    \"شوكة\": 49,\n    \"تل السلطان\": 50,\n    \"الشابورة\": 51,\n    \"البرازيل\": 52,\n    \"العودة\": 53,\n    \"رفح الغربية\": 54,\n    \"مخيم يبنا\": 55,\n    \"السلام\": 56\n  }[ $json['التجمع السكاني'] ] || ''\n}}\n",
+              "type": "string"
+            },
+            {
+              "id": "8c9f2045-7bb9-4e7c-bc82-27696adfe792",
+              "name": "neighborhood",
+              "value": "={{ $json[\"العنوان\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "e9ce3801-615e-4a53-8cfb-d9f16e29c32d",
+              "name": "street",
+              "value": "={{ $json[\"العنوان\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "b20927f8-55c9-4fca-b564-088a4c06217f",
+              "name": "nearest_landmark",
+              "value": "={{ $json[\"العنوان\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "fd98fa7a-c7d7-4c5b-b747-d82545bbc571",
+              "name": "is_displaced",
+              "value": "={{ $json['هل تم النزوح من المنزل بسبب الحرب وتم تغيير موقع المسكن'] === 'نعم' ? 3 : 1 }}",
+              "type": "string"
+            },
+            {
+              "id": "fc38a520-b064-44ea-a00e-649e32565a29",
+              "name": "is_owner",
+              "value": "={{ $json['حيازة المسكن'] === 'مالك' ? 1 : 0 }}",
+              "type": "string"
+            },
+            {
+              "id": "cbe036cb-c4a1-4b99-acfd-b1c3af7f4b9d",
+              "name": "housing_type",
+              "value": "={{ $json['  نوع المسكن  '] === 'دار' ? 'concrete' : $json['  نوع المسكن  '] === براكة ? 'asbestos_sheets' : 'tent'}}",
+              "type": "string"
+            },
+            {
+              "id": "af55e23e-1a7d-4faa-8071-342e2ca9b263",
+              "name": "war_damage",
+              "value": "={{ $json['هل عانت الأسرة من فقدان أراضي/عقارات؟'] === 'لا' ? 0 : 1 }}",
+              "type": "string"
+            },
+            {
+              "id": "87077cf6-3c0e-44ba-8ce6-1c4e483361e2",
+              "name": "damage_type",
+              "value": "={{ $json['  حجم الضرر للمسكن نتيجة الحرب  '] === 'ضرر كلي' ? 'total_damage' : $json['  حجم الضرر للمسكن نتيجة الحرب  '] === 'ضرر جزئي يصلح للسكن' ? 'inhabitable_part' : $json['  حجم الضرر للمسكن نتيجة الحرب  '] === 'ضرر جزئي لا يصلح للسكن' ? 'uninhabitable_part' : 'partial_damage'}}\n",
+              "type": "string"
+            },
+            {
+              "id": "995a16b6-b6d8-4e80-96eb-302cb548cb0c",
+              "name": "_token",
+              "value": "={{ $('[extract token and cookie]').item.json.csrf }}",
+              "type": "string"
+            },
+            {
+              "id": "d8add7d4-a823-4dd5-8f71-eb4b65831df7",
+              "name": "XSRF-TOKEN",
+              "value": "={{ $('HTTP GET Request').item.json.headers['set-cookie'][0].split(\";\")[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "355ad3a6-68ee-43f4-a74c-ad1b468489c7",
+              "name": "ksachorg_session",
+              "value": "={{ $('HTTP GET Request').item.json.headers['set-cookie'][1].split(\";\")[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2256,
+        -752
+      ],
+      "id": "df098c48-0993-4fd2-a3f6-00ca02e476be",
+      "name": "Mapping"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json[\"Form URL\"] }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        944,
+        -672
+      ],
+      "id": "c8ed802f-f41e-4dd8-913b-5c3df868234d",
+      "name": "HTTP GET Request"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "labels",
+              "cssSelector": "label[for]",
+              "returnArray": true
+            },
+            {
+              "key": "csrf",
+              "cssSelector": "input[name='_token']",
+              "returnValue": "value"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        -704
+      ],
+      "id": "006d97e4-6674-4406-bbb2-7609ac3ca15b",
+      "name": "[extract token and cookie]"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://portal.ksach.org/beneficial/store",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-GB,en-US;q=0.9,en;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "max-age=0"
+            },
+            {
+              "name": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "name": "Origin",
+              "value": "https://portal.ksach.org"
+            },
+            {
+              "name": "Referer",
+              "value": "https://portal.ksach.org/"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "document"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "navigate"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-origin"
+            },
+            {
+              "name": "Sec-Fetch-User",
+              "value": "?1"
+            },
+            {
+              "name": "Upgrade-Insecure-Requests",
+              "value": "1"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "Cookie",
+              "value": "={{ $json['XSRF-TOKEN']+';'+ $json.ksachorg_session}}"
+            },
+            {
+              "name": "X-XSRF-TOKEN",
+              "value": "={{ $json._token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "_token",
+              "value": "={{ $('[extract token and cookie]').item.json.csrf }}"
+            },
+            {
+              "name": "full_name",
+              "value": "={{ $json.full_name }}"
+            },
+            {
+              "name": "id_num",
+              "value": "={{ $json.id_num }}"
+            },
+            {
+              "name": "wife_name"
+            },
+            {
+              "name": "wife_id_num"
+            },
+            {
+              "name": "marital_status",
+              "value": "={{ $json.marital_status }}"
+            },
+            {
+              "name": "mobile",
+              "value": "={{ $json.mobile }}"
+            },
+            {
+              "name": "family_count",
+              "value": "={{ $json.family_count }}"
+            },
+            {
+              "name": "male_count",
+              "value": "={{ $json.male_count }}"
+            },
+            {
+              "name": "female_count",
+              "value": "={{ $json.female_count }}"
+            },
+            {
+              "name": "children_under_2",
+              "value": "={{ $json.children_under_2 }}"
+            },
+            {
+              "name": "children_under_3",
+              "value": "={{ $json.children_under_3 }}"
+            },
+            {
+              "name": "children_5_to_16",
+              "value": "={{ $json.children_5_to_16 }}"
+            },
+            {
+              "name": "document",
+              "value": "={{ $json.document }}"
+            },
+            {
+              "name": "is_breadwinner_disabled",
+              "value": "={{ $json.is_breadwinner_disabled }}"
+            },
+            {
+              "name": "has_disability",
+              "value": "={{ $json.has_disability }}"
+            },
+            {
+              "name": "disability_type",
+              "value": "={{ $json.disability_type }}"
+            },
+            {
+              "name": "has_chronic_disease",
+              "value": "={{ $json.has_chronic_disease }}"
+            },
+            {
+              "name": "war_victim",
+              "value": "={{ $json.war_victim }}"
+            },
+            {
+              "name": "province",
+              "value": "={{ $json.province }}"
+            },
+            {
+              "name": "city",
+              "value": "={{ $json.city }}"
+            },
+            {
+              "name": "housing_complex",
+              "value": "={{ $json.housing_complex }}"
+            },
+            {
+              "name": "neighborhood",
+              "value": "={{ $json.neighborhood }}"
+            },
+            {
+              "name": "street",
+              "value": "={{ $json.street }}"
+            },
+            {
+              "name": "nearest_landmark",
+              "value": "={{ $json.nearest_landmark }}"
+            },
+            {
+              "name": "is_displaced",
+              "value": "={{ $json.is_displaced }}"
+            },
+            {
+              "name": "is_owner",
+              "value": "={{ $json.is_owner }}"
+            },
+            {
+              "name": "housing_type",
+              "value": "={{ $json.housing_type }}"
+            },
+            {
+              "name": "war_damage",
+              "value": "={{ $json.war_damage }}"
+            },
+            {
+              "name": "damage_type",
+              "value": "={{ $json.damage_type }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2512,
+        -752
+      ],
+      "id": "8e2dc76c-63b1-4045-bfc1-f13ad7820541",
+      "name": "HTTP POST Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1533ae83-a680-4aba-a96c-9549aa584822",
+              "name": "scrapped_at",
+              "value": "={{ $now.format('yyyy-MM-dd HH:mm:ss') }}",
+              "type": "string"
+            },
+            {
+              "id": "9a02bfe3-68a6-47d8-96fd-cb04e1c61c5d",
+              "name": "row_number",
+              "value": "={{ $('Get User\\'s data').item.json.row_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3024,
+        -752
+      ],
+      "id": "6b6c1368-9563-4e2a-b3b8-7527e7d23337",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE",
+          "mode": "list",
+          "cachedResultName": "بيانات المواطنين \"آية نبيل سليم\"",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1293933407,
+          "mode": "list",
+          "cachedResultName": "بيانات المواطنين",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE/edit#gid=1293933407"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Scrapped At": "={{ $json.scrapped_at }}",
+            "row_number": "={{ $json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Scrapped At",
+              "displayName": "Scrapped At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "طريقة التسجيل",
+              "displayName": "طريقة التسجيل",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل توافق على تعبئة الاستبيان",
+              "displayName": "هل توافق على تعبئة الاستبيان",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "الوثيقة",
+              "displayName": "الوثيقة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "نوع الهوية",
+              "displayName": "نوع الهوية",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رقم هوية المواطن",
+              "displayName": "رقم هوية المواطن",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "الاسم الاول",
+              "displayName": "الاسم الاول",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "اسم الأب",
+              "displayName": "اسم الأب",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "اسم الجد",
+              "displayName": "اسم الجد",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "اسم العائلة",
+              "displayName": "اسم العائلة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "تاريخ الميلاد",
+              "displayName": "تاريخ الميلاد",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "الحالة الاجتماعية",
+              "displayName": "الحالة الاجتماعية",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "اسم الزوجة",
+              "displayName": "اسم الزوجة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رقم هوية الزوجة",
+              "displayName": "رقم هوية الزوجة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل المعيل مصاب حرب",
+              "displayName": "هل المعيل مصاب حرب",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل المعيل ذو اعاقة",
+              "displayName": "هل المعيل ذو اعاقة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "نوع الاعاقة",
+              "displayName": "نوع الاعاقة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "لديه امراض مزمنه",
+              "displayName": "لديه امراض مزمنه",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "معيل الأسرة",
+              "displayName": "معيل الأسرة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رقم الجوال 1",
+              "displayName": "رقم الجوال 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رقم الجوال 2",
+              "displayName": "رقم الجوال 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "المحافظة الأصلية",
+              "displayName": "المحافظة الأصلية",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "المحافظة الحالية",
+              "displayName": "المحافظة الحالية",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "التجمع السكاني",
+              "displayName": "التجمع السكاني",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "الشارع",
+              "displayName": "الشارع",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "العنوان",
+              "displayName": "العنوان",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل لدى أسرتك حاليًا مصدر دخل ثابت (على سبيل المثال، وظيفة حكومية، أنروا، عمل خاص) ؟",
+              "displayName": "هل لدى أسرتك حاليًا مصدر دخل ثابت (على سبيل المثال، وظيفة حكومية، أنروا، عمل خاص) ؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل تستفيد أسرتك حاليًا من مساعدات مالية بشكل منتظم من أي جهة أخرى ؟",
+              "displayName": "هل تستفيد أسرتك حاليًا من مساعدات مالية بشكل منتظم من أي جهة أخرى ؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل استفادت أسرتك من مساعدة مالية غير منتظمة من أي جهة خلال الشهرين الماضيين ؟",
+              "displayName": "هل استفادت أسرتك من مساعدة مالية غير منتظمة من أي جهة خلال الشهرين الماضيين ؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 0 و 2 سنوات؟",
+              "displayName": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 0 و 2 سنوات؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 0 و 2 سنوات؟",
+              "displayName": "كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 0 و 2 سنوات؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 3 و 5 سنوات؟",
+              "displayName": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 3 و 5 سنوات؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 3 و 5 سنوات؟",
+              "displayName": "كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 3 و 5 سنوات؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 6 و 17 سنة؟",
+              "displayName": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 6 و 17 سنة؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 6 و 17 سنة؟",
+              "displayName": "كم عدد أفراد أسرتك الإناث الذين تتراوح أعمارهم بين 6 و 17 سنة؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 18 و 59 سنة؟",
+              "displayName": "كم عدد أفراد أسرتك الذكور الذين تتراوح أعمارهم بين 18 و 59 سنة؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الاناث الذين تتراوح أعمارهم بين 18 و 59 سنة؟",
+              "displayName": "كم عدد أفراد أسرتك الاناث الذين تتراوح أعمارهم بين 18 و 59 سنة؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الذكور الذين تبلغ أعمارهم أكبر من أو يساوي 60 سنة؟",
+              "displayName": "كم عدد أفراد أسرتك الذكور الذين تبلغ أعمارهم أكبر من أو يساوي 60 سنة؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد أفراد أسرتك الاناث الذين تبلغ أعمارهم أكبر من أو يساوي 60 سنة؟",
+              "displayName": "كم عدد أفراد أسرتك الاناث الذين تبلغ أعمارهم أكبر من أو يساوي 60 سنة؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "عدد الأفراد ذوي الأمراض المزمنة",
+              "displayName": "عدد الأفراد ذوي الأمراض المزمنة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "عدد الأفراد ذوي الإعاقة",
+              "displayName": "عدد الأفراد ذوي الإعاقة",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل يوجد فتيات / نساء حوامل أو مرضعات في أسرتك في الوقت الحالي ؟",
+              "displayName": "هل يوجد فتيات / نساء حوامل أو مرضعات في أسرتك في الوقت الحالي ؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد الأطفال أقل من سنتين في اسرتك؟",
+              "displayName": "كم عدد الأطفال أقل من سنتين في اسرتك؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "كم عدد الأطفال أقل من 3 سنوات في اسرتك؟",
+              "displayName": "كم عدد الأطفال أقل من 3 سنوات في اسرتك؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "  هل يوجد أطفال غير مصحوبين أو منفصلين عن ذويهم ضمن الأسرة؟  ",
+              "displayName": "  هل يوجد أطفال غير مصحوبين أو منفصلين عن ذويهم ضمن الأسرة؟  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "  هل يوجد طفل هو المعيل الوحيد أو الأساسي للأسرة؟  ",
+              "displayName": "  هل يوجد طفل هو المعيل الوحيد أو الأساسي للأسرة؟  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "حيازة المسكن",
+              "displayName": "حيازة المسكن",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "  نوع المسكن  ",
+              "displayName": "  نوع المسكن  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "  حجم الضرر للمسكن نتيجة الحرب  ",
+              "displayName": "  حجم الضرر للمسكن نتيجة الحرب  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل تم النزوح من المنزل بسبب الحرب وتم تغيير موقع المسكن",
+              "displayName": "هل تم النزوح من المنزل بسبب الحرب وتم تغيير موقع المسكن",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "حدد/ي ما هي اهم احتياجاتك الاساسية ذات الاولوية التي تحتاجها الاسرة بشكل عاجل",
+              "displayName": "حدد/ي ما هي اهم احتياجاتك الاساسية ذات الاولوية التي تحتاجها الاسرة بشكل عاجل",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "حدد/ي ما هي اهم احتياجاتك الثانوية التي تحتاجها الاسرة ( تستطيع اختيار اكثر من خيار)",
+              "displayName": "حدد/ي ما هي اهم احتياجاتك الثانوية التي تحتاجها الاسرة ( تستطيع اختيار اكثر من خيار)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "مصادر دخل الاسرة ( تستطيع اختيار اكثر من خيار)",
+              "displayName": "مصادر دخل الاسرة ( تستطيع اختيار اكثر من خيار)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "الدخل الشهري (شيكل)",
+              "displayName": "الدخل الشهري (شيكل)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "هل عانت الأسرة من فقدان أراضي/عقارات؟",
+              "displayName": "هل عانت الأسرة من فقدان أراضي/عقارات؟",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "خلال هذه الحرب هل فقدت احد افراد عائلتك",
+              "displayName": "خلال هذه الحرب هل فقدت احد افراد عائلتك",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "  هل يوجد حساب بنكي باسم رب الأسرة أو أحد أفرادها؟  ",
+              "displayName": "  هل يوجد حساب بنكي باسم رب الأسرة أو أحد أفرادها؟  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "اسم صاحب الحساب البنكي",
+              "displayName": "اسم صاحب الحساب البنكي",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "اسم البنك / الفرع",
+              "displayName": "اسم البنك / الفرع",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رقم هوية صاحب الحساب",
+              "displayName": "رقم هوية صاحب الحساب",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "رقم الحساب",
+              "displayName": "رقم الحساب",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        3264,
+        -672
+      ],
+      "id": "d86b0ca4-22fa-4a62-9816-324d4674ef64",
+      "name": "Update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "shL3Mwbo6n8a0MFy",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE",
+          "mode": "list",
+          "cachedResultName": "بيانات المواطنين \"آية نبيل سليم\"",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 531343014,
+          "mode": "list",
+          "cachedResultName": "روابط المساعدات",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ddUWtX2uonC0aYkNnu6Tl0IW18Q5SG9O-Np8Dxnd2YE/edit#gid=531343014"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        384,
+        -672
+      ],
+      "id": "01676a4e-93ef-4ead-935b-9da392b5ede0",
+      "name": "Get Aid Links",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "shL3Mwbo6n8a0MFy",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        112,
+        -656
+      ],
+      "id": "317cb8b2-755c-4cb0-8d93-e1b3280f07b7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "10d15b26-3f03-4b9f-8c9b-43e37e3f511d",
+              "leftValue": "={{ $json.data }}",
+              "rightValue": "تم حفظ البيانات بنجاح",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2720,
+        -752
+      ],
+      "id": "5c1f77a5-e689-4241-9fde-13f714a8bf79",
+      "name": "If POST Request succeed"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get User's data": {
+      "main": [
+        [
+          {
+            "node": "Loop over users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "if(scrapped_at ==null)": {
+      "main": [
+        [
+          {
+            "node": "Mapping",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop over users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "loop over aid links": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP GET Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop over users": {
+      "main": [
+        [
+          {
+            "node": "loop over aid links",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "if(scrapped_at ==null)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapping": {
+      "main": [
+        [
+          {
+            "node": "HTTP POST Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP GET Request": {
+      "main": [
+        [
+          {
+            "node": "[extract token and cookie]",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[extract token and cookie]": {
+      "main": [
+        [
+          {
+            "node": "Get User's data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP POST Request": {
+      "main": [
+        [
+          {
+            "node": "If POST Request succeed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop over users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Aid Links": {
+      "main": [
+        [
+          {
+            "node": "loop over aid links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Aid Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If POST Request succeed": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop over users",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8c7e493b-9bcc-4aa9-bb57-fac875eb3f15",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2af62a80af0d37cb46b872bc72aa939277c62cdec2288e51a70a3367c588982f"
+  },
+  "id": "LMSNYbFCsxqYElJY",
+  "tags": []
+}
