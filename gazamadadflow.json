@@ -29,7 +29,7 @@
       "name": "Get User's data",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "shL3Mwbo6n8a0MFy",
+          "id": "REMOVED",
           "name": "Google Sheets account"
         }
       }
